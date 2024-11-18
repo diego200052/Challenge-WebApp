@@ -9,6 +9,9 @@ This project is a WebApp developed with **Flask** to manage bank accounts, payme
   - [Features](#features)
   - [Requirements](#requirements)
   - [Installation](#installation)
+  - [Flow diagram](#flow-diagram)
+  - [ERD logical](#erd-logical)
+  - [ERD relational](#erd-relational)
 
 ## Features
 
@@ -50,3 +53,15 @@ This project is a WebApp developed with **Flask** to manage bank accounts, payme
 1. Start the server:
    ```bash
    sh run.sh
+
+## Flow diagram
+
+![Flow diagram](img/FlowDiagram.png)
+
+## ERD logical
+
+![ERD logical](img/Logical.png)
+
+## ERD relational
+
+![ERD relational](img/Relational.png)
