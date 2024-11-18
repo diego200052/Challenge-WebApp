@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Create expense</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Form -->
+            <form action="/expenses-create" method="POST" id="create-expense-form">
+                <div class="row mb-3">
+                  <label for="expense_date" class="col-sm-3 col-form-label">Expense Date</label>
+                  <div class="col-sm-9">
+                    <input type="date" id="expense_date" name="expense_date" class="form-control">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="description" class="col-sm-3 col-form-label">Description</label>
+                  <div class="col-sm-9">
+                    <textarea id="description" name="description" class="form-control" rows="3" placeholder="Enter expense description"></textarea>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="due_date" class="col-sm-3 col-form-label">Due Date</label>
+                  <div class="col-sm-9">
+                    <input type="date" id="due_date" name="due_date" class="form-control">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="total_cost" class="col-sm-3 col-form-label">Total Cost</label>
+                  <div class="col-sm-9">
+                    <input type="number" step="0.01" id="total_cost" name="total_cost" class="form-control" placeholder="0.00">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <label for="recipient_account" class="col-sm-3 col-form-label">Recipient Account</label>
+                  <div class="col-sm-9">
+                    <input type="text" id="recipient_account" name="recipient_account" class="form-control" placeholder="Enter recipient account">
+                  </div>
+                </div>
+
+                <div class="row mb-3 d-none">
+                  <label for="status" class="col-sm-3 col-form-label">Status</label>
+                  <div class="col-sm-9">
+                    <select id="status" name="status" class="form-select">
+                      <option selected value="0">Pending</option>
+                      <option value="1">Approved</option>
+                      <option value="2">Canceled</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col text-end">
+                    <button type="submit" class="btn btn-primary">Create Expense</button>
+                  </div>
+                </div>
+              </form><!-- End Form -->
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Website Traffic -->
+          <div class="card">
+            <!--<div class="filter">
+              <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+              <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <li class="dropdown-header text-start">
+                  <h6>Filter</h6>
+                </li>
+
+                <li><a class="dropdown-item" href="#">Today</a></li>
+                <li><a class="dropdown-item" href="#">This Month</a></li>
+                <li><a class="dropdown-item" href="#">This Year</a></li>
+              </ul>
+            </div>-->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+{% endblock %}

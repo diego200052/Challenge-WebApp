@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Payments</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+          <li class="breadcrumb-item active">Payments</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Recent Payments -->
+            <div class="col-12">
+              <div class="card recent-sales overflow-auto">
+
+                <div class="filter">
+                  <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li class="dropdown-header text-start">
+                      <h6>Filter</h6>
+                    </li>
+
+                    <li><a class="dropdown-item" href="#">Today</a></li>
+                    <li><a class="dropdown-item" href="#">This Month</a></li>
+                    <li><a class="dropdown-item" href="#">This Year</a></li>
+                  </ul>
+                </div>
+
+                <div class="card-body">
+                  <h5 class="card-title">Payments</h5>
+
+                  <table class="table table-borderless datatable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Payment Date</th>
+                        <th scope="col">Total amount</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for payment in payments %}
+                      <tr>
+                        <th scope="row">{{payment.payment_date}}</th>
+                        <td>${{payment.total_amount | currency}}</td>
+                        <td><span class="badge {{payment.status_class}}">{{payment.status}}</span></td>
+                        <td><div class="d-flex flex-column align-items-center">
+                          {% if payment.status == "Pending" %}
+                          <!-- Approve Button -->
+                          <button
+                              class="btn btn-success btn-sm mb-1 update-status"
+                              data-id="{{ payment.id }}"
+                              data-action="approve">
+                              Approve
+                          </button>
+                          <!-- Disapprove Button -->
+                          <button
+                              class="btn btn-danger btn-sm update-status"
+                              data-id="{{ payment.id }}"
+                              data-action="cancel">
+                              Disapprove
+                          </button>
+                          {% elif payment.status == "Approved" %}
+                          <!-- Pay Button -->
+                          <form class="d-flex" action="/payments/{{ payment.id }}/pay" method="POST">
+                              <select name="bank_account_id" class="form-select me-2">
+                                  {% for account in bank_accounts %}
+                                  <option value="{{ account.id }}">{{ account.account_name }}</option>
+                                  {% endfor %}
+                              </select>
+                              <button type="submit" class="btn btn-primary btn-sm">Pay</button>
+                          </form>
+                          {% else %}
+                            <span class="text-muted">Action not Available</span>
+                          {% endif %}
+                      </div></td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Recent Payments -->
+
+
+
+          </div>
+        </div><!-- End Left side columns -->
+
+        <!-- Right side columns -->
+        <div class="col-lg-4">
+
+          <!-- Revenue Card -->
+          <div class="col-xxl-12 col-md-12">
+            <div class="card info-card revenue-card">
+
+              <!--<div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>-->
+
+              <div class="card-body">
+                <h5 class="card-title">Payments completed <span>| This Month</span></h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-currency-dollar"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>${{total_payments | currency}}</h6>
+                    <!--<span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>-->
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div><!-- End Revenue Card -->
+
+        <!-- Website Traffic -->
+        <div class="card">
+          <div class="card-body pb-0">
+            <h5 class="card-title">Balances <span>| Bank Accounts</span></h5>
+
+            <div id="balanceChart" style="min-height: 400px;" class="echart"></div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                    echarts.init(document.querySelector("#balanceChart")).setOption({
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            top: '5%',
+                            left: 'center'
+                        },
+                        series: [{
+                            name: 'Balances',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            avoidLabelOverlap: false,
+                            label: {
+                                show: true,
+                                formatter: '{b}: ${c}', // Mostrar etiqueta y saldo
+                                position: 'outside'
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                    fontSize: '18',
+                                    fontWeight: 'bold'
+                                }
+                            },
+                            labelLine: {
+                                show: true
+                            },
+                            data: [
+                                {% for account in bank_accounts %}
+                                {
+                                    value: {{ account.current_balance }},
+                                    name: 'Balance {{ account.account_name }} | {{ account.bank_name }}'
+                                },
+                                {% endfor %}
+                            ]
+                        }]
+                    });
+                });
+            </script>
+        </div>
+        </div><!-- End Website Traffic -->
+
+        </div><!-- End Right side columns -->
+
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Eventos para botones de estado
+    document.querySelectorAll(".update-payment-status").forEach(function (button) {
+      button.addEventListener("click", function () {
+        const paymentId = this.getAttribute("data-id");
+        const action = this.getAttribute("data-action");
+        const endpoint = `/payments/${paymentId}/${action}`; // Endpoint según la acción
+
+        // Realizar solicitud al backend Flask
+        fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          //User UUID hardcoded because this app doesn't have authenticator
+          body: action === "execute" ? JSON.stringify({ executor_id: "8cb4cad4-ecf2-4a42-8c61-334fe9486df0" }) : null
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error al actualizar el estado del pago");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          alert(data.message);
+          window.location.reload(); // Recargar la página para actualizar la tabla
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("Error al procesar la solicitud.");
+        });
+      });
+    });
+  });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Update Payment Status
+        document.querySelectorAll(".update-status").forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                const paymentId = this.getAttribute("data-id");
+                const action = this.getAttribute("data-action");
+                const endpoint = `/payments/${paymentId}/${action}`;
+
+                fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Payment could not be updated.");
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message || "Payment updated successfully.");
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while updating the payment.");
+                });
+            });
+        });
+    });
+</script>
+{% endblock %}

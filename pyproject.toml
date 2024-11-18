@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "programadorjr-prueba-webapp"
+version = "0.1.0"
+description = "Web App for registering and tracking company expenses and payments."
+authors = ["Diego Medina <diegorm.medina@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.1.0"
+gunicorn = "^23.0.0"
+flask-wtf = "^1.2.2"
+pydantic = "^2.9.2"
+requests = "^2.32.3"
+pydantic-settings = "^2.6.1"
+pre-commit = "^4.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.3.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
